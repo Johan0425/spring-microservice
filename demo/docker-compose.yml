@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mariadb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/demodb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+    networks:
+      - spring-network
+    restart: always
+
+  mariadb:
+    image: mariadb:11.2
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=demodb
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - spring-network
+    restart: always
+
+networks:
+  spring-network:
+    driver: bridge
+
+volumes:
+  mariadb-data:
